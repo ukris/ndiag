@@ -15,6 +15,7 @@ if len(sys.argv) == 1:
     sys.exit(1)
     
 
+
 src = sys.argv[1]
 
 # Get the interfaces list
@@ -28,13 +29,13 @@ else:
 if isdev:
     print '[-]\tSniffing...'
     try:
-        sniff(store=0, prn=lambda x:processpkt(x), iface=src, count=10000)
+        sniff(store=0, prn=lambda x:processpkt(x), iface=src)#, count=10000)
     except KeyboardInterrupt:
         print '[+]\tStopped sniffing!'
 else:
     print '[-]\tReading file %s' % str(src)
     try:    
-        sniff(store=0, prn=lambda x:processpkt(x), offline=src, count=10000)
+        sniff(store=0, prn=lambda x:processpkt(x), offline=src)#, count=10000)
         print '[+]\tFinished reading file %s!' % str(src)
     except KeyboardInterrupt:
         print '[+]\tUser stopped reading file!'
