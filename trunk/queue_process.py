@@ -15,9 +15,15 @@ G = nx.DiGraph()
 
 def processQs():
 
-    while True:
+    loop = True
+
+    while loop:
 
         pkt = Ether_comms_Q.get(True)
+
+        if pkt == None:
+            loop = False
+            break
         
         # Set defaults
         Ether_src_I = None
@@ -81,7 +87,7 @@ def net_roles():
         G.node[n]['ether'] = G.node[n]['text']
         G.node[n]['IP'] = addr
         G.node[n]['text'] += '\n' + addr
-        
+
 
 # Check whether you already have the value in the list
 def addNode(typ, element, node_List):
@@ -107,6 +113,8 @@ def addNode(typ, element, node_List):
         i = node_List.index(element)
         name = typ + '_' + str(i)
         G.add_node(name, nodeType=typ, text=element)
+
+	print '[+] Added ' + element
         
     else:
         i = node_List.index(element)

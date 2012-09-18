@@ -7,11 +7,14 @@ Ether_comms_Q = Queue.Queue(10000)
 # Processing of packet to save to the queues
 def processpkt(pkt):
     
+    if pkt == None:
+        Ether_comms_Q.put_nowait(pkt)
+        return    
+    
     if not pkt.name == 'Ethernet':
         return    
     
     try:
-
         Ether_comms_Q.put_nowait(pkt)
         
     except Queue.Full:
