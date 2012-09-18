@@ -15,8 +15,13 @@ if len(sys.argv) == 1:
     sys.exit(1)
     
 
-
 src = sys.argv[1]
+
+# Process queues
+qthread = threading.Thread(target=processQs)
+
+qthread.setDaemon(True)
+qthread.start()
 
 # Get the interfaces list
 devs = getinterfaces()
@@ -40,13 +45,10 @@ else:
     except KeyboardInterrupt:
         print '[+]\tUser stopped reading file!'
 
-# Process queues
-qthread = threading.Thread(target=processQs)
-
-qthread.setDaemon(True)
-qthread.start()
+# Notify sniffing has ended
+processpkt(None)
 
 # Wait for processing thread to complete all tasks in queue
-Ether_comms_Q.join()
+qthread.join()
 
 createmap()
