@@ -137,7 +137,7 @@ def createmap():
     print '[+]\tWritten to %s!' % mapfile
     plt.show()
 
-# # http://stackoverflow.com/questions/3982819/networkx-node-attribute-drawing
+# http://stackoverflow.com/questions/3982819/networkx-node-attribute-drawing
 # http://networkx.lanl.gov/reference/generated/networkx.drawing.nx_pylab.draw_networkx.html#networkx.drawing.nx_pylab.draw_networkx
 
 # Lookup ion for interaction (updating the graph) also animate?
