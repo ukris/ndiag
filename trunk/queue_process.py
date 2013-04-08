@@ -1,35 +1,31 @@
 from scapy.all import *
 from functions import *
 
-import networkx as nx
-import matplotlib.pyplot as plt
-
+# Track nodes
 Ether_nodes    = []
 IP_nodes       = []
-
+# 
 Ether_comms    = []
 
 Ether2IP_join  = []
 
-G = nx.DiGraph()
-
-def processQs():
+def processQ():
 
     loop = True
 
     while loop:
 
-        pkt = Ether_comms_Q.get(True)
+        pkt = pkt_Q.get(True)
 
         if pkt == None:
             loop = False
             break
         
         # Set defaults
-        Ether_src_I = None
-        Ether_dst_I = None
-        IP_src_I    = None
-        IP_dst_I    = None
+        Ether_src = None
+        Ether_dst = None
+        IP_src    = None
+        IP_dst    = None
 
         # Get the layers
         Ether_layer  = pkt.getlayer(Ether)
@@ -41,29 +37,14 @@ def processQs():
         Ether_src = Ether_layer.src.replace(':', '-')
         Ether_dst = Ether_layer.dst.replace(':', '-')
         
-        Ether_src_I = addNode('Ether', Ether_src, Ether_nodes)
-        Ether_dst_I = addNode('Ether', Ether_dst, Ether_nodes)
-            
-        # Set the Ether communications
-        addNode('Ether_edge', (Ether_dst_I, Ether_src_I), Ether_comms)
-        
         # IP layer, may not have IP layer (e.g. ARP)
         if not IP_layer == None:
-            IP_src      = IP_layer.src
-            IP_dst      = IP_layer.dst
+            IP_src = IP_layer.src
+            IP_dst = IP_layer.dst
             
-            IP_src_I = addNode('IP', IP_src, IP_nodes)
-            IP_dst_I = addNode('IP', IP_dst, IP_nodes)
-            
-            # Join Ether to IP
-            addNode('Ether2IP_edge', (Ether_src_I, IP_src_I), Ether2IP_join)
-            addNode('Ether2IP_edge', (Ether_dst_I, IP_dst_I), Ether2IP_join)
-
-        # Do the fancy stuff -----------------------------------------------
-        # Process relationships and assign network roles
-        net_roles()
+            print Ether_src + ' ' + Ether_dst + ' ' + IP_src + ' ' + IP_dst
         
-        Ether_comms_Q.task_done()
+        pkt_Q.task_done()
 
 
 def net_roles():
@@ -121,24 +102,3 @@ def addNode(typ, element, node_List):
         name = typ + '_' + str(i)
     
     return name
-
-
-def createmap():
-    
-    labels = dict((n,d['text']) for n,d in G.nodes(data=True))
-    
-    mapfile = 'map.png'    
-
-    print '[-]\tCreating %s...' % mapfile
-    
-    nx.draw_graphviz(G, labels=labels, node_size=100, node_shape='o')    
-#    nx.draw_graphviz(G, node_size=800)
-    plt.savefig(mapfile)
-    print '[+]\tWritten to %s!' % mapfile
-    plt.show()
-
-# http://stackoverflow.com/questions/3982819/networkx-node-attribute-drawing
-# http://networkx.lanl.gov/reference/generated/networkx.drawing.nx_pylab.draw_networkx.html#networkx.drawing.nx_pylab.draw_networkx
-
-# Lookup ion for interaction (updating the graph) also animate?
-# http://matplotlib.sourceforge.net/api/pyplot_api.html#matplotlib.pyplot.ion
